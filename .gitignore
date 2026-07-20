@@ -1,0 +1,26 @@
+# Build output
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+
+# Generated offline package feed (regenerate with build/pack.ps1)
+feed/
+
+# .NET
+project.lock.json
+artifacts/
+*.user
+*.suo
+.vs/
+*.binlog
+
+# Rider / VS Code
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local agent settings (per-user, not shared)
+.claude/settings.local.json

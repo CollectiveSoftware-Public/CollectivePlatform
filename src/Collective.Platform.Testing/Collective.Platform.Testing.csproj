@@ -1,0 +1,15 @@
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <IsPackable>true</IsPackable>
+    <PackageId>Collective.Platform.Testing</PackageId>
+    <Description>Deterministic test doubles for the Collective.Platform abstractions (FakeFileSystem, FakeSettingsStore, ManualTimeProvider, TempDirectory).</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Collective.Platform.Abstractions\Collective.Platform.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>

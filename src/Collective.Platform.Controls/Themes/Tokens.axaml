@@ -1,0 +1,130 @@
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!--
+  Collective Software shared design tokens.
+
+  The single source of truth for the suite's colour palette, corner radii, spacing and
+  typography. Every desktop head (GIT / Code / HTTP / Vault / Term) merges this dictionary into
+  its Application.Resources so the apps share one visual language ("Refined Fluent" — Windows-11
+  styling on top of FluentTheme).
+
+  Colour tokens are theme-aware (Dark + Light variants). The ACCENT is intentionally NOT fixed
+  here: each app keeps its own brand accent by overriding `Collective.Accent` (+ a Fluent
+  `ColorPaletteResources Accent="…"`) directly in its own Application.Resources, which win over a
+  merged dictionary. The neutral defaults below (family blue) are only a fallback.
+
+  Consume with, in App.axaml:
+    <Application.Resources>
+      <ResourceDictionary>
+        <ResourceDictionary.MergedDictionaries>
+          <ResourceInclude Source="avares://Collective.Platform.Controls/Themes/Tokens.axaml"/>
+        </ResourceDictionary.MergedDictionaries>
+        … per-app accent override …
+      </ResourceDictionary>
+    </Application.Resources>
+  and the matching style pack in App.axaml's <Application.Styles> after <FluentTheme/>:
+    <StyleInclude Source="avares://Collective.Platform.Controls/Themes/Controls.axaml"/>
+-->
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="using:System">
+
+  <!-- ===== Theme-invariant tokens ===== -->
+
+  <!-- Corner radii. Setting Fluent's own ControlCornerRadius/OverlayCornerRadius rounds stock
+       buttons, text boxes, combo boxes, menus and flyouts suite-wide with no retemplating. -->
+  <CornerRadius x:Key="Collective.CornerRadius">6</CornerRadius>
+  <CornerRadius x:Key="Collective.CornerRadiusSmall">4</CornerRadius>
+  <CornerRadius x:Key="Collective.CornerRadiusLarge">8</CornerRadius>
+  <CornerRadius x:Key="ControlCornerRadius">6</CornerRadius>
+  <CornerRadius x:Key="OverlayCornerRadius">8</CornerRadius>
+
+  <!-- Spacing scale (use for StackPanel.Spacing and as a reference for paddings/margins). -->
+  <sys:Double x:Key="Collective.SpaceXS">2</sys:Double>
+  <sys:Double x:Key="Collective.SpaceS">4</sys:Double>
+  <sys:Double x:Key="Collective.SpaceM">8</sys:Double>
+  <sys:Double x:Key="Collective.SpaceL">16</sys:Double>
+  <sys:Double x:Key="Collective.SpaceXL">24</sys:Double>
+
+  <!-- Common paddings as Thicknesses. -->
+  <Thickness x:Key="Collective.PaddingCard">12</Thickness>
+  <Thickness x:Key="Collective.PaddingToolbar">8,6</Thickness>
+  <Thickness x:Key="Collective.PaddingStatusBar">10,3</Thickness>
+  <Thickness x:Key="Collective.PaddingControl">10,6</Thickness>
+
+  <!-- Typography. -->
+  <sys:Double x:Key="Collective.FontSizeSmall">11</sys:Double>
+  <sys:Double x:Key="Collective.FontSizeNormal">13</sys:Double>
+  <sys:Double x:Key="Collective.FontSizeLarge">16</sys:Double>
+  <sys:Double x:Key="Collective.FontSizeTitle">20</sys:Double>
+  <FontFamily x:Key="Collective.FontFamilyUI">Segoe UI Variable Text, Segoe UI, Inter, sans-serif</FontFamily>
+  <FontFamily x:Key="Collective.FontFamilyMono">Cascadia Mono, Cascadia Code, Consolas, monospace</FontFamily>
+
+  <!-- Accent defaults (family blue). Apps override these four + a ColorPaletteResources Accent. -->
+  <SolidColorBrush x:Key="Collective.Accent" Color="#2B6BD4"/>
+  <SolidColorBrush x:Key="Collective.AccentHover" Color="#3B7BE4"/>
+  <SolidColorBrush x:Key="Collective.AccentPressed" Color="#2459B8"/>
+  <SolidColorBrush x:Key="Collective.OnAccent" Color="#FFFFFF"/>
+
+  <!-- ===== Theme-aware colour tokens ===== -->
+  <ResourceDictionary.ThemeDictionaries>
+
+    <!-- Dark variant — seeded from CollectiveGIT's hand-tuned palette. -->
+    <ResourceDictionary x:Key="Dark">
+      <SolidColorBrush x:Key="Collective.Background"      Color="#1B1B1F"/>
+      <SolidColorBrush x:Key="Collective.Surface"         Color="#26262B"/>
+      <SolidColorBrush x:Key="Collective.SurfaceAlt"      Color="#1C1C20"/>
+      <SolidColorBrush x:Key="Collective.Chrome"          Color="#212126"/>
+      <SolidColorBrush x:Key="Collective.Chip"            Color="#2D2D34"/>
+      <SolidColorBrush x:Key="Collective.Border"          Color="#36363E"/>
+      <SolidColorBrush x:Key="Collective.BorderSubtle"    Color="#2C2C33"/>
+      <SolidColorBrush x:Key="Collective.Text"            Color="#E4E4E7"/>
+      <SolidColorBrush x:Key="Collective.TextStrong"      Color="#FFFFFF"/>
+      <SolidColorBrush x:Key="Collective.TextMuted"       Color="#9A9AA3"/>
+      <SolidColorBrush x:Key="Collective.TextSubtle"      Color="#7A7A85"/>
+      <SolidColorBrush x:Key="Collective.Label"           Color="#C9C9D1"/>
+      <SolidColorBrush x:Key="Collective.Link"            Color="#6FA8FF"/>
+      <SolidColorBrush x:Key="Collective.Success"         Color="#5FB371"/>
+      <SolidColorBrush x:Key="Collective.SuccessSurface"  Color="#16241B"/>
+      <SolidColorBrush x:Key="Collective.SuccessBorder"   Color="#356041"/>
+      <SolidColorBrush x:Key="Collective.SuccessOnSurface" Color="#CFE8CF"/>
+      <SolidColorBrush x:Key="Collective.Warn"            Color="#D6A03B"/>
+      <SolidColorBrush x:Key="Collective.WarnAlt"         Color="#E0A33B"/>
+      <SolidColorBrush x:Key="Collective.Danger"          Color="#E06C6C"/>
+      <SolidColorBrush x:Key="Collective.DangerSurface"   Color="#7A2E2E"/>
+      <SolidColorBrush x:Key="Collective.DangerSurfacePressed" Color="#6A2626"/>
+      <SolidColorBrush x:Key="Collective.DangerOnSurface" Color="#FFDDDD"/>
+      <SolidColorBrush x:Key="Collective.Badge"           Color="#33384A"/>
+      <SolidColorBrush x:Key="Collective.BadgeText"       Color="#9FB4E8"/>
+    </ResourceDictionary>
+
+    <!-- Light variant. -->
+    <ResourceDictionary x:Key="Light">
+      <SolidColorBrush x:Key="Collective.Background"      Color="#F4F4F7"/>
+      <SolidColorBrush x:Key="Collective.Surface"         Color="#FFFFFF"/>
+      <SolidColorBrush x:Key="Collective.SurfaceAlt"      Color="#ECECF0"/>
+      <SolidColorBrush x:Key="Collective.Chrome"          Color="#E9E9ED"/>
+      <SolidColorBrush x:Key="Collective.Chip"            Color="#E3E3E9"/>
+      <SolidColorBrush x:Key="Collective.Border"          Color="#D2D2DA"/>
+      <SolidColorBrush x:Key="Collective.BorderSubtle"    Color="#DEDEE4"/>
+      <SolidColorBrush x:Key="Collective.Text"            Color="#1B1B1F"/>
+      <SolidColorBrush x:Key="Collective.TextStrong"      Color="#0B0B0E"/>
+      <SolidColorBrush x:Key="Collective.TextMuted"       Color="#6A6A72"/>
+      <SolidColorBrush x:Key="Collective.TextSubtle"      Color="#8A8A92"/>
+      <SolidColorBrush x:Key="Collective.Label"           Color="#3A3A42"/>
+      <SolidColorBrush x:Key="Collective.Link"            Color="#2F6FED"/>
+      <SolidColorBrush x:Key="Collective.Success"         Color="#2E8B45"/>
+      <SolidColorBrush x:Key="Collective.SuccessSurface"  Color="#E4F3E7"/>
+      <SolidColorBrush x:Key="Collective.SuccessBorder"   Color="#9CCBA8"/>
+      <SolidColorBrush x:Key="Collective.SuccessOnSurface" Color="#1F5B2E"/>
+      <SolidColorBrush x:Key="Collective.Warn"            Color="#B5791E"/>
+      <SolidColorBrush x:Key="Collective.WarnAlt"         Color="#C2861F"/>
+      <SolidColorBrush x:Key="Collective.Danger"          Color="#C0392B"/>
+      <SolidColorBrush x:Key="Collective.DangerSurface"   Color="#F2D6D6"/>
+      <SolidColorBrush x:Key="Collective.DangerSurfacePressed" Color="#E7BCBC"/>
+      <SolidColorBrush x:Key="Collective.DangerOnSurface" Color="#7A2E2E"/>
+      <SolidColorBrush x:Key="Collective.Badge"           Color="#DCE4F7"/>
+      <SolidColorBrush x:Key="Collective.BadgeText"       Color="#34508F"/>
+    </ResourceDictionary>
+
+  </ResourceDictionary.ThemeDictionaries>
+</ResourceDictionary>

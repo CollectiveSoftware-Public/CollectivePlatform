@@ -1,0 +1,140 @@
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!--
+  Collective Software shared control styles ("Refined Fluent").
+
+  Layered over <FluentTheme/> (include AFTER it in Application.Styles). Deliberately light: it
+  tweaks padding/typography on a few stock controls and adds a shared class vocabulary the heads
+  reuse so panels, toolbars, status bars and section labels look identical across the suite. It
+  does NOT retemplate controls — the rounded-corner modernization comes from the ControlCornerRadius
+  token in Tokens.axaml. Every value is driven by a token (see Tokens.axaml).
+
+    <Application.Styles>
+      <FluentTheme/>
+      <StyleInclude Source="avares://Collective.Platform.Controls/Themes/Controls.axaml"/>
+    </Application.Styles>
+-->
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!-- Slightly roomier default controls (Win11 feel). -->
+  <Style Selector="Button">
+    <Setter Property="Padding" Value="{DynamicResource Collective.PaddingControl}"/>
+    <Setter Property="CornerRadius" Value="{DynamicResource Collective.CornerRadius}"/>
+  </Style>
+
+  <!-- Primary/brand button: uses Fluent's accent button theme, which follows the app's
+       per-app ColorPaletteResources Accent. Apply with Classes="accent". -->
+  <Style Selector="Button.accent">
+    <Setter Property="Theme" Value="{DynamicResource AccentButtonTheme}"/>
+  </Style>
+
+  <Style Selector="TextBox">
+    <Setter Property="CornerRadius" Value="{DynamicResource Collective.CornerRadius}"/>
+  </Style>
+
+  <!-- Calm lists: transparent surface, roomy rounded rows, soft low-contrast selection. -->
+  <Style Selector="ListBox">
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="BorderThickness" Value="0"/>
+  </Style>
+  <Style Selector="ListBoxItem">
+    <Setter Property="Padding" Value="{DynamicResource Collective.PaddingControl}"/>
+    <Setter Property="CornerRadius" Value="{DynamicResource Collective.CornerRadius}"/>
+    <Setter Property="MinHeight" Value="0"/>
+  </Style>
+  <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource Collective.SurfaceAlt}"/>
+  </Style>
+
+  <Style Selector="ComboBox">
+    <Setter Property="CornerRadius" Value="{DynamicResource Collective.CornerRadius}"/>
+    <Setter Property="Padding" Value="{DynamicResource Collective.PaddingControl}"/>
+  </Style>
+
+  <Style Selector="TabItem">
+    <Setter Property="FontSize" Value="{DynamicResource Collective.FontSizeNormal}"/>
+  </Style>
+
+  <!-- ===== Shared class vocabulary ===== -->
+
+  <!-- Section label above a group of inputs (e.g. "ENVIRONMENT", "HISTORY"). Quiet, recessed. -->
+  <Style Selector="TextBlock.section-header">
+    <Setter Property="FontWeight" Value="SemiBold"/>
+    <Setter Property="FontSize" Value="{DynamicResource Collective.FontSizeSmall}"/>
+    <Setter Property="Foreground" Value="{DynamicResource Collective.TextMuted}"/>
+    <Setter Property="LetterSpacing" Value="0.4"/>
+    <Setter Property="Margin" Value="0,0,0,6"/>
+  </Style>
+
+  <!-- De-emphasised inline text. -->
+  <Style Selector="TextBlock.muted">
+    <Setter Property="Foreground" Value="{DynamicResource Collective.TextMuted}"/>
+  </Style>
+
+  <!-- Page/section title. -->
+  <Style Selector="TextBlock.title">
+    <Setter Property="FontSize" Value="{DynamicResource Collective.FontSizeTitle}"/>
+    <Setter Property="FontWeight" Value="SemiBold"/>
+    <Setter Property="Foreground" Value="{DynamicResource Collective.TextStrong}"/>
+  </Style>
+
+  <!-- Surface card: a bordered, rounded container. Sections read as distinct cards (the calm pass's
+       borderless card was reverted at the user's request; the other calm bits — quiet headers, roomy
+       lists — stay). -->
+  <Style Selector="Border.card">
+    <Setter Property="Background" Value="{DynamicResource Collective.Surface}"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource Collective.Border}"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="CornerRadius" Value="{DynamicResource Collective.CornerRadius}"/>
+    <Setter Property="Padding" Value="{DynamicResource Collective.PaddingCard}"/>
+  </Style>
+
+  <!-- Top toolbar strip. -->
+  <Style Selector="Border.toolbar">
+    <Setter Property="Background" Value="{DynamicResource Collective.Chrome}"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource Collective.Border}"/>
+    <Setter Property="BorderThickness" Value="0,0,0,1"/>
+    <Setter Property="Padding" Value="{DynamicResource Collective.PaddingToolbar}"/>
+  </Style>
+
+  <!-- Bottom status bar (brand-accent coloured). -->
+  <Style Selector="Border.statusbar">
+    <Setter Property="Background" Value="{DynamicResource Collective.Accent}"/>
+    <Setter Property="Padding" Value="{DynamicResource Collective.PaddingStatusBar}"/>
+  </Style>
+  <Style Selector="Border.statusbar TextBlock">
+    <Setter Property="Foreground" Value="{DynamicResource Collective.OnAccent}"/>
+    <Setter Property="FontSize" Value="{DynamicResource Collective.FontSizeSmall}"/>
+  </Style>
+
+  <!-- Neutral status bar (surface coloured) for apps that prefer it muted. -->
+  <Style Selector="Border.statusbar-neutral">
+    <Setter Property="Background" Value="{DynamicResource Collective.Chrome}"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource Collective.Border}"/>
+    <Setter Property="BorderThickness" Value="0,1,0,0"/>
+    <Setter Property="Padding" Value="{DynamicResource Collective.PaddingStatusBar}"/>
+  </Style>
+
+  <!-- Document tab strip (DocumentTabStrip): a document tab sitting in the chrome-coloured strip,
+       matching the surrounding toolbar; the active tab lifts to the content surface with an
+       accent underline. Ported from CollectiveWiki's Border.tab/.active (PaneBrush/EditorAreaBrush)
+       onto the shared tokens so every head gets the same look. -->
+  <Style Selector="Border.tab">
+    <Setter Property="Background" Value="{DynamicResource Collective.Chrome}"/>
+    <Setter Property="BorderBrush" Value="Transparent"/>
+    <Setter Property="BorderThickness" Value="0,0,0,2"/>
+    <Setter Property="Margin" Value="0,2,1,0"/>
+    <Setter Property="Cursor" Value="Hand"/>
+  </Style>
+  <Style Selector="Border.tab.active">
+    <Setter Property="Background" Value="{DynamicResource Collective.Surface}"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource Collective.Accent}"/>
+  </Style>
+
+  <!-- Dialog footer row: the .axaml counterpart of DialogScaffold's code-built footer. -->
+  <Style Selector="StackPanel.dialog-footer">
+    <Setter Property="Orientation" Value="Horizontal"/>
+    <Setter Property="HorizontalAlignment" Value="Right"/>
+    <Setter Property="Spacing" Value="8"/>
+  </Style>
+</Styles>

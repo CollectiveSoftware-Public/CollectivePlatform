@@ -1,0 +1,19 @@
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <IsPackable>true</IsPackable>
+    <PackageId>Collective.Platform</PackageId>
+    <Description>Shared platform-service implementations (FileSettingsStore, DesktopFileSystem) for the Collective Software stack.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Collective.Platform.Abstractions\Collective.Platform.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Collective.Platform.Tests" />
+  </ItemGroup>
+
+</Project>

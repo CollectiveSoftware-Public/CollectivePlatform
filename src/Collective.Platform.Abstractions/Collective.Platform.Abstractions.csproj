@@ -1,0 +1,11 @@
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <IsPackable>true</IsPackable>
+    <PackageId>Collective.Platform.Abstractions</PackageId>
+    <Description>Shared platform-service interfaces (IFileSystem, ISettingsStore) for the Collective Software stack.</Description>
+  </PropertyGroup>
+
+</Project>

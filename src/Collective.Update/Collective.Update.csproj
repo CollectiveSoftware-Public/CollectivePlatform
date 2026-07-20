@@ -1,0 +1,20 @@
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <!-- The suite's shared in-app updater: fetch a signed release manifest, verify ECDSA P-256 /
+         SHA-256 against app-supplied trusted keys, download exactly the declared artifact for the
+         RID, hash-verify, apply by atomic file swap. Extracted verbatim from CollectiveWiki's
+         Wiki.Update so there is ONE audited copy of this security-critical logic; consumers inject
+         product name / manifest URL / trusted keys via UpdateFeed. BCL-only.
+         Versioned independently of the Platform packages (this is 1.0.1, not the props version). -->
+    <IsPackable>true</IsPackable>
+    <PackageId>Collective.Update</PackageId>
+    <!-- 1.0.1: apply-restart hardening — relaunch brought inside the guard so a failed restart
+         reverts the swap and reports Failed instead of going silent (never-no-app strengthened). -->
+    <Version>1.0.1</Version>
+    <Description>Shared in-app auto-updater for the Collective Software suite: signed-manifest verification (ECDSA P-256, fail-closed), hash-verified artifact download, and atomic-swap apply with rollback. Consumers supply their product name, manifest URL, and trusted public keys.</Description>
+  </PropertyGroup>
+
+</Project>

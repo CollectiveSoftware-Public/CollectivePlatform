@@ -1,0 +1,27 @@
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <IsPackable>true</IsPackable>
+    <PackageId>Collective.Platform.Controls</PackageId>
+    <Description>Shared Avalonia controls for the Collective Software desktop heads. Includes the suite design system, FolderBrowserDialog (an in-app directory chooser that avoids the crash-prone Win32 native picker), ConfirmDialog, and the common UI-mechanics pass: a command registry feeding a command palette, generated menu, and keymap; a toast/notification host; a shared find bar; and an About dialog.</Description>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="12.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Collective.Platform.Controls.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Collective.Platform.Abstractions\Collective.Platform.Abstractions.csproj" />
+    <!-- FileExplorerControl's edit path (New/Rename/Delete/Copy/Move) uses the BCL-only
+         FileSystemOperations from Collective.Platform. Both are consumed by every head already. -->
+    <ProjectReference Include="..\Collective.Platform\Collective.Platform.csproj" />
+  </ItemGroup>
+
+</Project>

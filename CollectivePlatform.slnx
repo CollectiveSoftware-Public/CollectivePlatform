@@ -1,0 +1,18 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Collective.Platform.Abstractions/Collective.Platform.Abstractions.csproj" />
+    <Project Path="src/Collective.Platform/Collective.Platform.csproj" />
+    <Project Path="src/Collective.Platform.Controls/Collective.Platform.Controls.csproj" />
+    <Project Path="src/Collective.Platform.Secrets/Collective.Platform.Secrets.csproj" />
+    <Project Path="src/Collective.Platform.Testing/Collective.Platform.Testing.csproj" />
+    <Project Path="src/Collective.Update/Collective.Update.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Collective.Platform.Tests/Collective.Platform.Tests.csproj" />
+    <Project Path="tests/Collective.Platform.Controls.Headless.Tests/Collective.Platform.Controls.Headless.Tests.csproj" />
+    <Project Path="tests/Collective.Platform.Controls.Tests/Collective.Platform.Controls.Tests.csproj" />
+    <Project Path="tests/Collective.Platform.Secrets.Tests/Collective.Platform.Secrets.Tests.csproj" />
+    <Project Path="tests/Collective.Platform.Testing.Tests/Collective.Platform.Testing.Tests.csproj" />
+    <Project Path="tests/Collective.Update.Tests/Collective.Update.Tests.csproj" />
+  </Folder>
+</Solution>

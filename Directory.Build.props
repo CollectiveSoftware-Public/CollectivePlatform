@@ -1,0 +1,122 @@
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<Project>
+
+  <!--
+    Shared MSBuild properties for the CollectivePlatform packages. This repo is the one place
+    the common platform abstractions live; the product repos consume the published packages
+    instead of copy-porting these types.
+  -->
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+
+    <!-- Package metadata (FOSS). No monetization or identity. -->
+    <Authors>CollectivePlatform contributors</Authors>
+    <Product>CollectivePlatform</Product>
+    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+    <Copyright>Copyright (C) CollectivePlatform contributors</Copyright>
+
+    <!-- Single source of truth for the package version. -->
+    <!-- 1.1.0: Collective.Platform.Controls now ships the shared design system (Themes/Tokens.axaml
+         + Themes/Controls.axaml) consumed by every desktop head.
+         1.2.0: Controls adds the shared ConfirmDialog (yes/no destructive-action prompt) so heads
+         stop hand-rolling inline confirm modals. Controls-only change; consumers can vendor just the
+         new Collective.Platform.Controls.1.2.0.nupkg (it depends only on Avalonia).
+         1.3.0: calm-minimal design pass — Border.card is now borderless (+ new Border.card-outlined
+         escape hatch), section-header gains letter-spacing, and shared ListBox/ListBoxItem styles add
+         roomy rounded rows with a soft selection. Propagates GIT's calm look to all heads.
+         1.3.1: revert the borderless Border.card (user feedback) back to a bordered, rounded surface
+         card so sections read as distinct cards; drop the now-redundant card-outlined. The other
+         calm bits (quiet section-header, roomy lists) stay.
+         1.4.0: Collective.Platform.Controls adds the shared Window module — WindowStateService
+         (correct off-screen guard + maximized-preserves + off-UI-thread persist) over a dedicated
+         "window" geometry blob, ThemeController (mode->ThemeVariant + apply + re-theme hook), and a
+         shared AboutDialog. Controls now depends on Collective.Platform.Abstractions.
+         1.4.1: WindowStateService adds a block-safe Load() + synchronous Apply(window, geometry) split
+         so startup callers apply geometry on the UI thread without an await-on-UI-context deadlock risk
+         (ApplyAsync retained for callers on a running message pump). This release also MERGES IN the
+         parallel shared-UI-mechanics line (previously developed as a divergent 1.3.0): a command
+         system (CollectiveCommand / CommandRegistry / CommandMatcher / KeymapModel feeding
+         CommandPalette + CommandMenu + KeymapBehavior), a ToastService/ToastHost transient-notification
+         surface, a FindBarModel/FindBar incremental find bar, and Collective.Platform.Secrets'
+         EncryptedFileSecretStore. The Window module's AboutDialog (AboutDialogModel-based) is the
+         canonical one; the parallel line's string-arg About was superseded by it.
+         1.5.0: Secrets: shared DeviceKeyCipher/DeviceKeyProvider (consolidates Auth/SSH/Wiki copies),
+         SealedCredentialStore (device-key-sealed id->secret map over ISettingsStore), and
+         PosixFileSecretStore (permissions-only ~/.ssh-model alternative). SecretStores.CreateDefault
+         picks DPAPI on Windows and the encrypted-at-rest EncryptedFileSecretStore on Linux/macOS
+         (strictly stronger than the plaintext PosixFileSecretStore, which stays available by choice).
+         1.6.0: small-services batch: RecentItems(Store), CrashGuard, IdleLock, SaveChangesDialog,
+         ShortcutsDialog. Collective.Platform adds RecentItems/RecentItemsList/RecentItemsStore (a
+         shared MRU list over ISettingsStore), CrashGuard (last-resort unhandled-exception crash
+         logger, byte-identical "<product>-crash.log" filenames), and IdleLock (TimeProvider-driven
+         auto-lock timer). Collective.Platform.Controls adds SaveChangesDialog (3-way
+         save/discard/cancel data-safety prompt, complements ConfirmDialog) and
+         ShortcutItem/ShortcutsDialogModel/ShortcutsDialog (a grouped keyboard-shortcut reference
+         dialog, code-built like AboutDialog).
+         1.7.0: document-tabs module: TabList<T> + DocumentTabStrip. Collective.Platform.Controls
+         adds TabList<T> (pure, UI-free tab mechanics — keyed open-or-activate, Wiki-style
+         replace-active-slot navigation, veto/dispose close hooks, neighbor selection on close —
+         the shared core behind Code's WorkspaceViewModel and Wiki's OpenTabsViewModel) and
+         DocumentTabStrip (a code-built Avalonia strip rendering any ItemsSource via
+         Title/IsDirty/ToolTip selectors, raising TabActivated/TabCloseRequested/NewTabRequested;
+         no ICommand, delegate-driven like FolderBrowserDialog/AboutDialog). The tab/active Border
+         styles ported from CollectiveWiki's hand-rolled strip onto the shared Collective.* tokens
+         (Collective.Chrome / Collective.Surface / Collective.Accent).
+         1.8.0: NEW Collective.Platform.Testing package (BCL-only deterministic test doubles —
+         FakeFileSystem, FakeSettingsStore, ManualTimeProvider, TempDirectory, FakeDirectoryFileSystem —
+         so repos stop copy-porting them) + the file-exploring module: the directory-aware seam
+         IDirectoryFileSystem/DirectoryEntry (Abstractions) and the shared tree model
+         PhysicalDirectoryFileSystem/FileTreeNode/FileTreeWalk/FileTreeFilter/PathTreeBuilder
+         (Platform, BCL-only) — the canonical generalization of CollectiveCode's FileNode + Wiki's
+         tree builder, provable on local disk and remote SFTP.
+         1.8.1: FileTreeFilter dot handling is now split by kind — SkipDotFiles + SkipDotDirectories
+         (replacing SkipDotEntries) — so a code file tree can show dot-files (.gitignore/.env) while
+         still hiding dot-directories (.git/.vscode). Default behaviour is unchanged (both hidden).
+         1.9.0: file-explorer UI pass. Collective.Platform adds FileSystemOperations (BCL-only disk
+         mutation the file-exploring module lacked — create/rename/delete/copy/move, collision-suffixed,
+         cross-volume-safe). Collective.Platform.Controls adds the shared FileExplorerControl (a
+         code-built breadcrumb+list explorer over IDirectoryFileSystem — the alternative to the flat
+         tree) plus its pure, unit-tested models ExplorerHistory / BreadcrumbTrail / FolderListing and
+         FileIconFactory. Controls now references Collective.Platform (the control's AllowEdit path uses
+         FileSystemOperations). Consumers vendoring Controls 1.9.0 also vendor Collective.Platform 1.9.0.
+         Consumed by the new CollectiveFiles app and CollectiveCode's sidebar.
+         1.9.1: folder-picker follow-up. Collective.Platform.Controls adds FolderPickerDialog — a
+         folder chooser built on FileExplorerControl (breadcrumb + contents list, directories-only,
+         read-only) with a "Select Folder" button and the same ShowAsync(owner, startPath) signature as
+         FolderBrowserDialog, so it is a drop-in richer alternative. FileExplorerControl gains
+         DirectoriesOnly (folder-picker mode) and hides its New File/Folder buttons when AllowEdit is
+         off. First adopted by CollectiveWiki's "open vault" flow.
+         1.10.0: crash-logging hardening + file-explorer bug fix. Collective.Platform's CrashGuard now
+         APPENDS each crash (was overwrite) with a per-entry environment header (app version, OS+arch,
+         .NET runtime) and a 512 KB soft cap; FormatEntry is a pure helper. Collective.Platform.Controls
+         fixes FileExplorerControl.BuildRow throwing NullReferenceException when Avalonia re-invokes the
+         row template with a null item during virtualization clear/recycle (crashed CollectiveFiles, and
+         CollectiveWiki via its Open-Vault FolderPickerDialog). Re-vendored into CollectiveWiki +
+         CollectiveFiles.
+         1.11.0: utility-window chrome foundation. Collective.Platform.Controls adds UtilityWindow
+         (base for every secondary window: token Collective.Surface background at style priority so
+         local values win, owner->DefaultIcon icon inheritance on Opened, CenterOwner with a
+         CenterScreen fallback when ownerless) and DialogWindow (modal prompts: Width 440/MinWidth 320,
+         height-to-content, fixed-size, no taskbar entry, Escape closes when unhandled), plus
+         DialogScaffold.Build/DialogButtons.Primary|Secondary|Danger helpers and a
+         StackPanel.dialog-footer style. All shared dialogs (Confirm/SaveChanges/About/Shortcuts/
+         FolderBrowser/FolderPicker) and CommandPalette re-base onto the new types - same public APIs.
+         New Collective.Platform.Controls.Headless.Tests project (xunit.v3 + Avalonia.Headless.XUnit,
+         isolated from the xunit-2.x Controls.Tests).
+         1.12.0: DocumentTabStrip gains a per-tab right-click menu — Close / Close Others / Close to
+         the Left / Close to the Right / Close All — raising the new TabCloseScopeRequested event
+         (TabCloseScope enum + TabCloseScopeEventArgs carrying the anchor tab); items that would be
+         no-ops for the clicked tab's position are greyed out. The ✕ button + middle-click and the
+         existing TabActivated/TabCloseRequested/NewTabRequested events are unchanged (non-breaking).
+         The scoped-close logic lives once in TabList<T> (CloseOthers/ToLeft/ToRight/AllAsync — guarded,
+         a vetoed save aborts the batch), and DocumentTabStrip.Bind(list, title, …) wires items,
+         selectors, activate, close, the scoped closes, active→selection sync and the + button in one
+         call — so a head adopting document tabs doesn't re-hand-wire events and inherits future tab
+         behaviour on re-vendor. Re-vendored into CollectiveWiki + CollectiveDocs (the two consumers). -->
+    <Version>1.12.0</Version>
+  </PropertyGroup>
+
+</Project>
