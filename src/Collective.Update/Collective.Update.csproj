@@ -12,8 +12,10 @@
     <IsPackable>true</IsPackable>
     <PackageId>Collective.Update</PackageId>
     <!-- 1.0.1: apply-restart hardening — relaunch brought inside the guard so a failed restart
-         reverts the swap and reports Failed instead of going silent (never-no-app strengthened). -->
-    <Version>1.0.1</Version>
+         reverts the swap and reports Failed instead of going silent (never-no-app strengthened).
+         1.0.2: UpdateCleanup — consumer-called startup sweep of the ".old" leftover (retry ~15 s
+         while the exiting parent holds the lock, then give up silently). -->
+    <Version>1.0.2</Version>
     <Description>Shared in-app auto-updater for the Collective Software suite: signed-manifest verification (ECDSA P-256, fail-closed), hash-verified artifact download, and atomic-swap apply with rollback. Consumers supply their product name, manifest URL, and trusted public keys.</Description>
   </PropertyGroup>
 
