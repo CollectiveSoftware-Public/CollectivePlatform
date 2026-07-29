@@ -116,7 +116,7 @@
          selectors, activate, close, the scoped closes, active→selection sync and the + button in one
          call — so a head adopting document tabs doesn't re-hand-wire events and inherits future tab
          behaviour on re-vendor. Re-vendored into CollectiveWiki + CollectiveDocs (the two consumers). -->
-    <Version>1.12.0</Version>
+    <Version>1.12.1</Version>
   </PropertyGroup>
 
 </Project>

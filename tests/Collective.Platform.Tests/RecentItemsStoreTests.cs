@@ -45,4 +45,42 @@ public class RecentItemsStoreTests
         await store.RemoveAsync("A");
         Assert.Empty(await store.GetAsync());
     }
+
+    // ---- best-effort under real file locks (the 2026-07-29 CollectiveWiki startup crash:
+    // a concurrent instance held recentVaults.json, AddAsync threw IOException through an
+    // async-void handler, process died — an MRU write must never throw) ----
+
+    [Fact]
+    public async Task AddAsync_does_not_throw_when_the_file_is_locked()
+    {
+        if (!OperatingSystem.IsWindows()) return;   // POSIX has no mandatory sharing locks
+
+        var fs = new TempDirFileSystem();
+        var store = new RecentItemsStore(new FileSettingsStore(fs), "recentVaults");
+        var path = System.IO.Path.Combine(fs.AppDataDirectory, "recentVaults.json");
+        await System.IO.File.WriteAllTextAsync(path, """{"Items":["old"]}""");
+
+        using var gate = System.IO.File.Open(path, System.IO.FileMode.Open,
+            System.IO.FileAccess.Read, System.IO.FileShare.None);
+
+        var updated = await store.AddAsync("new");   // must not throw, even though nothing can persist
+
+        Assert.Contains("new", updated);
+    }
+
+    [Fact]
+    public async Task GetAsync_returns_empty_when_the_file_is_locked()
+    {
+        if (!OperatingSystem.IsWindows()) return;
+
+        var fs = new TempDirFileSystem();
+        var store = new RecentItemsStore(new FileSettingsStore(fs), "recentVaults");
+        var path = System.IO.Path.Combine(fs.AppDataDirectory, "recentVaults.json");
+        await System.IO.File.WriteAllTextAsync(path, """{"Items":["old"]}""");
+
+        using var gate = System.IO.File.Open(path, System.IO.FileMode.Open,
+            System.IO.FileAccess.Read, System.IO.FileShare.None);
+
+        Assert.Empty(await store.GetAsync());        // degraded, not dead
+    }
 }
