@@ -14,8 +14,19 @@
     <!-- 1.0.1: apply-restart hardening — relaunch brought inside the guard so a failed restart
          reverts the swap and reports Failed instead of going silent (never-no-app strengthened).
          1.0.2: UpdateCleanup — consumer-called startup sweep of the ".old" leftover (retry ~15 s
-         while the exiting parent holds the lock, then give up silently). -->
-    <Version>1.0.2</Version>
+         while the exiting parent holds the lock, then give up silently).
+         1.1.0: two security fixes from the 2026-07-31 audit. (a) Anti-rollback: a signature proves
+         a manifest is genuine, not CURRENT, and every published manifest stays fetchable at its
+         release tag forever — so an old signed manifest could be replayed to walk a user backwards
+         onto a known-vulnerable release. UpdatePolicy.ShouldOffer now takes a highestSeen floor
+         (+ AdvanceHighestSeen), carried by UpdateFeed.HighestSeenVersion; null preserves the old
+         behaviour, so hosts adopt it by persisting one string. (b) Apply-time TOCTOU: the staged
+         artifact was verified at download and then sat on disk across a save prompt of unbounded
+         length. StagedUpdate now carries the manifest SHA-256 and FileSwapApplier re-hashes
+         immediately before the swap, returning the new ApplyOutcome.Tampered.
+         Minor, not patch: StagedUpdate gained a required positional member. No real consumer
+         constructs one (it comes back from DownloadAsync), but the signature did change. -->
+    <Version>1.1.0</Version>
     <Description>Shared in-app auto-updater for the Collective Software suite: signed-manifest verification (ECDSA P-256, fail-closed), hash-verified artifact download, and atomic-swap apply with rollback. Consumers supply their product name, manifest URL, and trusted public keys.</Description>
   </PropertyGroup>
 
