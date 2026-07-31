@@ -38,7 +38,7 @@ public sealed class UpdateStager(IUpdateDownloader downloader)
             await File.WriteAllBytesAsync(part, bytes, ct);
             if (File.Exists(final)) File.Delete(final);
             File.Move(part, final);
-            return new StagedUpdate(final, info.Version);
+            return new StagedUpdate(final, info.Version, info.Artifact.Sha256);
         }
         finally
         {
