@@ -37,9 +37,22 @@ public static class UpdatePolicy
 
     public static bool IsNewer(string candidate, string current) => CompareVersions(candidate, current) > 0;
 
-    public static bool ShouldOffer(string candidate, string current, string? skipped)
+    /// <summary>Whether to offer <paramref name="candidate"/>. <paramref name="highestSeen"/> is the newest
+    /// version this install has ever been offered, and acts as an anti-rollback floor: a signature proves a
+    /// manifest is genuine, not that it is CURRENT, and every published manifest stays fetchable at its
+    /// release tag forever. Without the floor, anyone able to answer the update request can replay an old
+    /// signed manifest and walk the user back onto a release with known holes, as long as it is still newer
+    /// than what they happen to be running. Null means "not recorded" and preserves the previous behaviour,
+    /// so an app that has not adopted the mark keeps working.</summary>
+    public static bool ShouldOffer(string candidate, string current, string? skipped, string? highestSeen = null)
         => IsNewer(candidate, current)
-           && !string.Equals(candidate, skipped, StringComparison.Ordinal);
+           && !string.Equals(candidate, skipped, StringComparison.Ordinal)
+           && (highestSeen is null || CompareVersions(candidate, highestSeen) >= 0);
+
+    /// <summary>The new high-water mark after seeing <paramref name="candidate"/> — never lower than what
+    /// was already recorded, so observing a replayed manifest cannot itself lower the floor.</summary>
+    public static string AdvanceHighestSeen(string candidate, string? highestSeen)
+        => highestSeen is null || CompareVersions(candidate, highestSeen) > 0 ? candidate : highestSeen;
 
     public static bool IsCheckDue(DateTime? lastUtc, DateTime nowUtc)
         => lastUtc is null || nowUtc - lastUtc.Value >= CheckInterval;

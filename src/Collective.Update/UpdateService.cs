@@ -35,7 +35,8 @@ public sealed class UpdateService(
         var artifact = manifest.SelectArtifact(feed.Rid);
         if (artifact is null) return new UpdateCheck.UpToDate();               // no build for this RID
 
-        if (!UpdatePolicy.ShouldOffer(manifest.Version, feed.CurrentVersion, feed.SkippedVersion))
+        if (!UpdatePolicy.ShouldOffer(manifest.Version, feed.CurrentVersion, feed.SkippedVersion,
+                                      feed.HighestSeenVersion))
             return new UpdateCheck.UpToDate();
 
         return new UpdateCheck.Available(new UpdateInfo(manifest.Version, artifact, manifest.NotesUrl));

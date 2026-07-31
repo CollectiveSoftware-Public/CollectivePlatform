@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 
 namespace Collective.Update;
 
@@ -28,6 +29,12 @@ public sealed class FileSwapApplier(Action<string> launch, Action<int> exit) : I
     {
         var cur = Path.GetFullPath(currentExePath);
         if (!IsInstallDirWritable(cur)) return ApplyOutcome.NotWritable;
+
+        // Re-verify immediately before the swap. The staging check proved the bytes were right when they
+        // were downloaded, but the file then waited on disk across a save prompt of unbounded length —
+        // this is the only check whose answer is still true for the bytes actually about to be executed.
+        if (!StagedBytesStillMatch(staged)) return ApplyOutcome.Tampered;
+
         var old = cur + ".old";
         try { if (File.Exists(old)) File.Delete(old); } catch { /* stale .old; best effort */ }
 
@@ -60,6 +67,22 @@ public sealed class FileSwapApplier(Action<string> launch, Action<int> exit) : I
         }
         exit(0);                                       // only after a successful launch; a started child is never reverted
         return ApplyOutcome.Failed;                // unreachable when exit() really exits
+    }
+
+    /// <summary>Whether the staged file still hashes to what the signed manifest declared. A missing or
+    /// unreadable file answers "no" — an artifact we cannot read is not one we should be installing.</summary>
+    private static bool StagedBytesStillMatch(StagedUpdate staged)
+    {
+        try
+        {
+            using var stream = File.OpenRead(staged.FilePath);
+            var actual = Convert.ToHexString(SHA256.HashData(stream)).ToLowerInvariant();
+            return string.Equals(actual, staged.Sha256, StringComparison.OrdinalIgnoreCase);
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException)
+        {
+            return false;
+        }
     }
 
     private static UnixFileMode UnixFileModeExecutable()

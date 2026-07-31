@@ -9,4 +9,12 @@ public sealed record UpdateFeed(
     IReadOnlyList<string> TrustedKeys,
     string CurrentVersion,
     string Rid,
-    string? SkippedVersion);
+    string? SkippedVersion,
+
+    /// <summary>The newest version this install has ever been offered, persisted by the app alongside
+    /// <see cref="SkippedVersion"/>. Supplying it enables anti-rollback: see
+    /// <see cref="UpdatePolicy.ShouldOffer"/>. Advance it with
+    /// <see cref="UpdatePolicy.AdvanceHighestSeen"/> whenever a check returns
+    /// <see cref="UpdateCheck.Available"/>. Left null, checks behave exactly as they did before the floor
+    /// existed — so adopting it is a one-line change in the host, not a migration.</summary>
+    string? HighestSeenVersion = null);
